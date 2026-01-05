@@ -27,14 +27,14 @@
 
       contact_preference: "text", // text | call | email
       name: "",
-      phone: "",
+     phone: "",
       email: "",
       text_consent: true,
 
       photo_urls: [],
 
       preferred_next_step: null, // book_inspection | call_back
-      preferred_time_window: null, // e.g. tomorrow_afternoon
+      preferred_time_window: null,
       notes: "",
 
       meta: { demo: true, user_agent: navigator.userAgent },
@@ -93,15 +93,35 @@
     scrollToBottom();
   }
 
+  // ✅ iPhone-safe: #cc-quick is scroll container; inner row is inline-flex nowrap
   function setQuickButtons(buttons) {
     $quick.innerHTML = "";
+
+    const row = document.createElement("div");
+    row.className = "cc-quick-row";
+
     (buttons || []).forEach((b) => {
       const btn = document.createElement("button");
       btn.className = "cc-btn";
       btn.textContent = b.label;
+
+      // ✅ sticky action buttons for DAMAGE selection
+      if (b.value === "DMG_DONE") btn.classList.add("cc-sticky-done");
+      if (b.value === "DMG_CLEAR") btn.classList.add("cc-sticky-clear");
+
       btn.onclick = () => handleUser(b.value, true);
-      $quick.appendChild(btn);
+      row.appendChild(btn);
     });
+
+    $quick.appendChild(row);
+
+    // If the row contains sticky buttons, nudge scroll toward the right
+    const hasSticky = (buttons || []).some((b) => b.value === "DMG_DONE" || b.value === "DMG_CLEAR");
+    if (hasSticky) {
+      requestAnimationFrame(() => {
+        $quick.scrollLeft = $quick.scrollWidth;
+      });
+    }
   }
 
   function setHint(text) {
@@ -138,6 +158,40 @@
     return (k || "").replace(/_/g, " ");
   }
 
+  function resetLead() {
+    state.lead = {
+      source: "website-chat",
+      intent: null,
+
+      drivable: null,
+      insurance: null,
+      claim_number: "",
+
+      vehicle_year: "",
+      vehicle_make: "",
+      vehicle_model: "",
+      vin: "",
+
+      damage_areas: [],
+      incident_description: "",
+      zip: "",
+
+      contact_preference: "text",
+      name: "",
+      phone: "",
+      email: "",
+      text_consent: true,
+
+      photo_urls: [],
+
+      preferred_next_step: null,
+      preferred_time_window: null,
+      notes: "",
+
+      meta: { demo: true, user_agent: navigator.userAgent },
+    };
+  }
+
   function summaryText() {
     const L = state.lead;
     const lines = [];
@@ -146,17 +200,13 @@
       lines.push(`Drivable: ${L.drivable || "-"}`);
       lines.push(`Insurance: ${L.insurance || "-"}`);
       if (L.claim_number) lines.push(`Claim #: ${L.claim_number}`);
-      lines.push(
-        `Vehicle: ${[L.vehicle_year, L.vehicle_make, L.vehicle_model].filter(Boolean).join(" ") || "-"}`
-      );
+      lines.push(`Vehicle: ${[L.vehicle_year, L.vehicle_make, L.vehicle_model].filter(Boolean).join(" ") || "-"}`);
       lines.push(`Damage: ${(L.damage_areas || []).map(prettyKey).join(", ") || "-"}`);
       lines.push(`What happened: ${L.incident_description || "-"}`);
       lines.push(`ZIP: ${L.zip || "-"}`);
     }
     if (L.intent === "book_inspection") {
-      lines.push(
-        `Vehicle: ${[L.vehicle_year, L.vehicle_make, L.vehicle_model].filter(Boolean).join(" ") || "-"}`
-      );
+      lines.push(`Vehicle: ${[L.vehicle_year, L.vehicle_make, L.vehicle_model].filter(Boolean).join(" ") || "-"}`);
       lines.push(`Time window: ${L.preferred_time_window || "-"}`);
     }
     lines.push(`Contact: ${L.contact_preference || "-"}`);
@@ -167,7 +217,6 @@
     return lines.join("\n");
   }
 
-  // ✅ Always include Done + Clear and keep them visible
   function renderDamageButtons() {
     setQuickButtons([
       { label: "Front", value: "DMG_front" },
@@ -223,6 +272,7 @@
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || "Submit failed");
 
@@ -258,47 +308,13 @@
     state.step = "WELCOME";
   }
 
-  function resetLead() {
-    state.lead = {
-      source: "website-chat",
-      intent: null,
-
-      drivable: null,
-      insurance: null,
-      claim_number: "",
-
-      vehicle_year: "",
-      vehicle_make: "",
-      vehicle_model: "",
-      vin: "",
-
-      damage_areas: [],
-      incident_description: "",
-      zip: "",
-
-      contact_preference: "text",
-      name: "",
-      phone: "",
-      email: "",
-      text_consent: true,
-
-      photo_urls: [],
-
-      preferred_next_step: null,
-      preferred_time_window: null,
-      notes: "",
-
-      meta: { demo: true, user_agent: navigator.userAgent },
-    };
-  }
-
   function handleUser(text, fromButton = false) {
     const raw = (text || "").trim();
     if (!raw) return;
 
     if (!fromButton) addBubble(raw, "user");
 
-    // Global commands
+    // Global
     if (raw === "RESTART") {
       $messages.innerHTML = "";
       resetLead();
@@ -381,7 +397,9 @@
         }
         if (raw === "TOW_DONE") {
           addBubble("No problem. You can reopen this chat anytime.", "bot");
-          setQuickButtons(phoneNumber ? [{ label: "Call Shop Now", value: "CALL_SHOP" }, { label: "Start over", value: "RESTART" }] : [{ label: "Start over", value: "RESTART" }]);
+          const btns = [{ label: "Start over", value: "RESTART" }];
+          if (phoneNumber) btns.unshift({ label: "Call Shop Now", value: "CALL_SHOP" });
+          setQuickButtons(btns);
           state.step = "POST_SUBMIT";
           return;
         }
@@ -460,11 +478,12 @@
           setHint("Try again.");
           return;
         }
+
         state.lead.vehicle_year = year;
         state.lead.vehicle_make = parts[1];
         state.lead.vehicle_model = parts.slice(2).join(" ");
 
-        addBubble("Where is the damage? (Pick all that apply, then tap Done)", "bot");
+        addBubble("Where is the damage? Swipe the buttons left/right. Tap Done when finished.", "bot");
         renderDamageButtons();
         setHint("Selected: (none)");
         state.step = "DAMAGE";
@@ -472,7 +491,7 @@
       }
 
       case "DAMAGE": {
-        // ✅ Keep Done available even if anything re-renders
+        // Keep Done/Clear accessible on iPhone
         renderDamageButtons();
 
         if (!raw.startsWith("DMG_")) {
