@@ -1,57 +1,245 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Crash Concierge Demo</title>
-
-    <!-- Widget styles -->
+    <title>Chatbot Demo Hub</title>
     <link rel="stylesheet" href="./widget.css" />
-
-    <!-- Mobile fixes -->
     <style>
-      @media (max-width: 480px), (max-height: 700px) {
-        #cc-panel {
-          right: 10px;
-          left: 10px;
-          bottom: 76px;
-          width: auto;
-          height: calc(100vh - 110px);
-          border-radius: 14px;
-        }
-        #cc-quick {
-          flex-wrap: nowrap !important;
-          overflow-x: auto !important;
-          overflow-y: hidden !important;
-          -webkit-overflow-scrolling: touch;
-          padding-bottom: 6px;
-          gap: 8px;
-        }
-        .cc-btn { flex: 0 0 auto; white-space: nowrap; }
-        .cc-btn.cc-sticky {
-          position: sticky;
-          right: 0;
-          z-index: 2;
-          border-color: rgba(255,255,255,.28);
-          background: rgba(255,255,255,.10);
-        }
-        .cc-btn.cc-sticky-clear {
-          position: sticky;
-          right: 86px;
-          z-index: 2;
-          border-color: rgba(255,255,255,.28);
-          background: rgba(255,255,255,.10);
-        }
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        margin: 0;
+        padding: 18px;
+        background: #0b0b0d;
+        color: #eaeaf0;
+      }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        margin: 0 0 6px;
+        font-size: 22px;
+      }
+
+      .sub {
+        margin: 0 0 16px;
+        opacity: 0.8;
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .card {
+        border: 1px solid rgba(255,255,255,.10);
+        background: rgba(255,255,255,.05);
+        border-radius: 16px;
+        padding: 14px;
+        box-shadow: 0 14px 30px rgba(0,0,0,.25);
+      }
+
+      .name {
+        font-weight: 800;
+        font-size: 16px;
+        margin: 0 0 6px;
+      }
+
+      .meta {
+        margin: 0 0 10px;
+        opacity: 0.85;
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .pillrow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 0;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid rgba(255,255,255,.16);
+        background: rgba(255,255,255,.06);
+        color: #eaeaf0;
+        padding: 10px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .btn:hover { background: rgba(255,255,255,.10); }
+
+      .btn-primary {
+        border: none;
+        background: #d40000;
+        color: #fff;
+      }
+
+      .status {
+        margin-top: 12px;
+        font-size: 13px;
+        opacity: 0.85;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        opacity: 0.9;
+      }
+
+      .footer {
+        margin-top: 18px;
+        opacity: 0.65;
+        font-size: 12px;
       }
     </style>
   </head>
 
   <body>
-    <h1 style="font-family: system-ui; margin: 24px;">
-      Crash Concierge Demo
-    </h1>
+    <div class="wrap">
+      <h1>Chatbot Demo Hub</h1>
+      <p class="sub">
+        Pick a business demo to launch the widget. Each demo uses the same codebase, just different config.
+        <br />
+        Tip: After launching one, you can switch demos by hitting “Reload widget”.
+      </p>
 
-    <!-- IMPORTANT: load your widget JS -->
-    <script defer src="./widget.js"></script>
+      <div class="grid" id="demoGrid"></div>
+
+      <div class="status" id="status"></div>
+
+      <div class="footer">
+        API endpoint used by all demos: <code>/.netlify/functions/new-lead</code>
+      </div>
+    </div>
+
+    <script>
+      // ---- Demo catalog ----
+      const DEMOS = [
+        {
+          id: "demo-autobody",
+          title: "Demo Auto Body",
+          phone: "303-555-1212",
+          address: "Denver Metro (demo)",
+          accent: "#d40000",
+          kind: "autobody",
+        },
+        {
+          id: "wesbecker-automotive",
+          title: "Wesbecker Automotive",
+          phone: "720-938-7000",
+          address: "6402 S Cedar St, Littleton, CO 80120",
+          accent: "#d40000",
+          kind: "automotive",
+        },
+      ];
+
+      // Keep track of current widget script tag so we can reload it
+      let widgetScriptTag = null;
+
+      function setStatus(msg) {
+        document.getElementById("status").textContent = msg || "";
+      }
+
+      function buildConfig(demo) {
+        // You can extend this per business later (hours, services, zip rules, etc.)
+        return {
+          shopName: demo.title,
+          phoneNumber: demo.phone,
+          shopAddress: demo.address, // not used by widget yet, but useful to store in meta later
+          serviceZipHint: "Enter your ZIP",
+          apiUrl: "/.netlify/functions/new-lead",
+          brandAccent: demo.accent,
+          // extra metadata (will ride along into lead.meta if you choose to include it)
+          demoId: demo.id,
+          demoKind: demo.kind,
+        };
+      }
+
+      function unloadWidget() {
+        // Remove existing widget UI if it exists
+        const panel = document.getElementById("cc-panel");
+        const launcher = document.getElementById("cc-launcher");
+        if (panel) panel.remove();
+        if (launcher) launcher.remove();
+
+        // Remove script tag
+        if (widgetScriptTag) {
+          widgetScriptTag.remove();
+          widgetScriptTag = null;
+        }
+
+        // Cleanup globals that could confuse re-init
+        delete window.CRASH_CONCIERGE_CONFIG;
+      }
+
+      function loadWidgetForDemo(demo) {
+        unloadWidget();
+
+        // Set the config the widget reads at load time
+        window.CRASH_CONCIERGE_CONFIG = buildConfig(demo);
+
+        // Inject widget script fresh
+        widgetScriptTag = document.createElement("script");
+        widgetScriptTag.src = "./widget.js?v=" + Date.now(); // cache-bust
+        widgetScriptTag.onload = () => {
+          setStatus(`Loaded: ${demo.title} — tap the chat bubble bottom-right.`);
+        };
+        widgetScriptTag.onerror = () => {
+          setStatus("Failed to load widget.js. Check that ./widget.js exists in the publish directory.");
+        };
+        document.body.appendChild(widgetScriptTag);
+      }
+
+      function render() {
+        const grid = document.getElementById("demoGrid");
+        grid.innerHTML = "";
+
+        for (const demo of DEMOS) {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <div class="name">${demo.title}</div>
+            <div class="meta">
+              <div><strong>Phone:</strong> ${demo.phone}</div>
+              <div><strong>Address:</strong> ${demo.address}</div>
+            </div>
+            <div class="pillrow">
+              <button class="btn btn-primary" data-action="launch" data-id="${demo.id}">Launch widget</button>
+              <button class="btn" data-action="reload" data-id="${demo.id}">Reload widget</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        }
+
+        grid.addEventListener("click", (e) => {
+          const btn = e.target.closest("button");
+          if (!btn) return;
+
+          const id = btn.getAttribute("data-id");
+          const action = btn.getAttribute("data-action");
+          const demo = DEMOS.find((d) => d.id === id);
+          if (!demo) return;
+
+          if (action === "launch" || action === "reload") {
+            loadWidgetForDemo(demo);
+          }
+        });
+
+        setStatus("Select a demo above to load the chatbot widget.");
+      }
+
+      render();
+    </script>
   </body>
 </html>
