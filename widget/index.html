@@ -1,0 +1,188 @@
+<!-- widget/embed.html -->
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Your Store</title>
+    <link rel="stylesheet" href="./widget.css" />
+    <style>
+      :root {
+        --ink: #1a1a1a;
+        --muted: #4b5563;
+        --accent: #c0392b;
+        --card: #ffffff;
+        --glow: rgba(192, 57, 43, 0.2);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        color: var(--ink);
+        background:
+          radial-gradient(1200px 600px at 10% -10%, rgba(192, 57, 43, 0.2), transparent 60%),
+          radial-gradient(900px 400px at 100% 10%, rgba(20, 94, 123, 0.18), transparent 65%),
+          linear-gradient(135deg, #f7f2ec, #f4f7fb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 20px 80px;
+      }
+
+      .shell {
+        width: min(820px, 100%);
+        background: var(--card);
+        border-radius: 20px;
+        padding: 28px 28px 32px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+        position: relative;
+        overflow: hidden;
+        animation: rise 700ms ease-out both;
+      }
+
+      .shell::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.7), transparent 70%);
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: #f9e8e6;
+        color: var(--accent);
+        font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+
+      h1 {
+        margin: 16px 0 8px;
+        font-size: clamp(32px, 4vw, 44px);
+        line-height: 1.1;
+      }
+
+      .subtitle {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+        font-size: 16px;
+      }
+
+      .steps {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        margin: 24px 0 0;
+      }
+
+      .step {
+        padding: 16px;
+        border-radius: 14px;
+        background: #f9fafb;
+        border: 1px solid #eef1f4;
+        font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+        animation: fade 900ms ease both;
+      }
+
+      .step strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--accent);
+      }
+
+      .tip {
+        margin-top: 18px;
+        font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+        color: var(--muted);
+      }
+
+      .bubble-hint {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 12px 30px var(--glow);
+        font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+        font-size: 14px;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <span class="badge">Your Store</span>
+      <h1>Your Store</h1>
+      <p class="subtitle">
+        Friendly repairs, clear updates, and a faster path back on the road.
+      </p>
+      <p>1701 Mile High Stadium Cir, Denver, CO 80204 · (303) 555-7777</p>
+      <section class="steps">
+        <div class="step">
+          <strong>Tell us about the damage</strong>
+          Share photos or a quick description and we will guide the next steps.
+        </div>
+        <div class="step">
+          <strong>Get an estimate</strong>
+          We will line up the right technician and confirm coverage options.
+        </div>
+        <div class="step">
+          <strong>Book your drop-off</strong>
+          Choose a time that fits your schedule and we will take it from there.
+        </div>
+      </section>
+      <p class="tip">Tap the chat bubble to start your repair estimate.</p>
+    </main>
+    <div class="bubble-hint">Chat with Your Store</div>
+
+    <script>
+      window.CRASH_CONCIERGE_CONFIG = {
+        shopName: "Your Store",
+        phoneNumber: "303-555-7777",         // used for "Call Shop Now"
+        serviceZipHint: "Enter your ZIP",
+        apiUrl: "http://localhost:8888/.netlify/functions/new-lead", // CHANGE ME
+        brandAccent: "#d40000"
+      };
+    </script>
+    <script src="./widget.js"></script>
+  </body>
+</html>
