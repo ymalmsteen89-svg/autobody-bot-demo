@@ -306,6 +306,251 @@
         body{ padding:16px; }
         h1{ font-size:26px; }
       }
+
+      /* Extra polish */
+      .hero{
+        border: 1px solid rgba(255,255,255,.16);
+      }
+      .hero-glow{
+        position:absolute;
+        inset:-3px;
+        background: conic-gradient(from 180deg,
+          rgba(255,42,42,.0),
+          rgba(255,42,42,.28),
+          rgba(255,204,102,.22),
+          rgba(255,42,42,.28),
+          rgba(255,42,42,.0)
+        );
+        filter: blur(14px);
+        opacity:.55;
+        animation: glowspin 9s linear infinite;
+        pointer-events:none;
+      }
+      @keyframes glowspin{
+        from{ transform: rotate(0deg); }
+        to{ transform: rotate(360deg); }
+      }
+
+      .cta-row{
+        display:grid;
+        grid-template-columns: auto auto 1fr;
+        align-items: stretch;
+        gap: 12px;
+      }
+      @media (max-width: 860px){
+        .cta-row{ grid-template-columns: 1fr; }
+      }
+
+      .cta-tip{
+        border: 1px solid rgba(255,255,255,.14);
+        background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(255,255,255,.04));
+        border-radius: 16px;
+        padding: 12px 14px;
+        display:flex;
+        gap: 12px;
+        align-items:flex-start;
+        box-shadow: 0 18px 38px rgba(0,0,0,.32);
+      }
+      .cta-tip .icon{
+        width: 34px;
+        height: 34px;
+        border-radius: 14px;
+        background: rgba(255,42,42,.12);
+        border: 1px solid rgba(255,42,42,.25);
+        display:grid;
+        place-items:center;
+        flex: 0 0 auto;
+        box-shadow: 0 10px 22px rgba(212,0,0,.18);
+      }
+      .cta-tip .icon svg{ width: 18px; height: 18px; opacity: .95; }
+      .cta-tip .title{
+        font-weight: 950;
+        letter-spacing: .01em;
+        margin: 1px 0 4px;
+      }
+      .cta-tip .steps{
+        margin: 0;
+        padding-left: 16px;
+        color: rgba(234,234,240,.78);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .cta-tip .steps b{ color: rgba(255,255,255,.90); }
+
+      .btn{
+        justify-content:center;
+        min-height: 46px;
+      }
+      .btn-primary{
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-primary::after{
+        content:"";
+        position:absolute;
+        inset:-2px;
+        background: radial-gradient(220px 80px at 20% 20%, rgba(255,255,255,.20), transparent 60%);
+        opacity:.75;
+        transform: translateX(-40%);
+        transition: transform .45s ease;
+        pointer-events:none;
+      }
+      .btn-primary:hover::after{ transform: translateX(25%); }
+
+      /* Make demo cards feel more “elite” */
+      .card{
+        position:relative;
+      }
+      .card::before{
+        content:"";
+        position:absolute;
+        inset:-1px;
+        border-radius:18px;
+        background: linear-gradient(135deg, rgba(255,42,42,.22), rgba(255,204,102,.14), rgba(255,255,255,0));
+        opacity:.22;
+        pointer-events:none;
+      }
+      .card > *{ position:relative; z-index:1; }
+
+      /* Capabilities + metrics + stack */
+      .split{
+        display:grid;
+        grid-template-columns: 1.2fr .8fr;
+        gap:14px;
+        align-items:stretch;
+      }
+      @media (max-width: 960px){
+        .split{ grid-template-columns: 1fr; }
+      }
+
+      .cap-grid{
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap:14px;
+      }
+
+      .cap{
+        border:1px solid rgba(255,255,255,.14);
+        background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+        border-radius:18px;
+        padding:14px 14px 13px;
+        box-shadow: 0 16px 34px rgba(0,0,0,.28);
+        position:relative;
+        overflow:hidden;
+      }
+      .cap::after{
+        content:"";
+        position:absolute;
+        inset:-2px;
+        background: radial-gradient(360px 120px at 20% 10%, rgba(255,42,42,.10), transparent 55%),
+                    radial-gradient(360px 120px at 80% 10%, rgba(255,204,102,.08), transparent 55%);
+        opacity:.75;
+        pointer-events:none;
+      }
+      .cap > *{ position:relative; z-index:1; }
+
+      .cap-top{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin-bottom:8px;
+      }
+      .cap-ico{
+        width:36px;height:36px;border-radius:14px;
+        display:grid;place-items:center;
+        background: rgba(255,42,42,.12);
+        border: 1px solid rgba(255,42,42,.25);
+        box-shadow: 0 10px 22px rgba(212,0,0,.16);
+        flex:0 0 auto;
+      }
+      .cap-ico svg{ width:18px;height:18px; opacity:.95; }
+      .cap-title{
+        font-weight:950;
+        letter-spacing:.01em;
+        margin:0;
+      }
+      .cap-desc{
+        margin:0;
+        color: rgba(234,234,240,.78);
+        font-size:13px;
+        line-height:1.4;
+      }
+
+      .metrics{
+        border:1px solid rgba(255,255,255,.14);
+        background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(255,255,255,.04));
+        border-radius:18px;
+        padding:14px;
+        box-shadow: 0 18px 38px rgba(0,0,0,.32);
+      }
+      .metrics h3{
+        margin:0 0 10px;
+        font-size:14px;
+        letter-spacing:.02em;
+        text-transform:uppercase;
+        opacity:.9;
+      }
+      .metric{
+        display:flex;
+        align-items:baseline;
+        justify-content:space-between;
+        gap:12px;
+        padding:10px 0;
+        border-top:1px solid rgba(255,255,255,.10);
+      }
+      .metric:first-of-type{ border-top:none; padding-top:4px; }
+      .m-num{
+        font-weight:980;
+        font-size:22px;
+        letter-spacing:.01em;
+      }
+      .m-label{
+        color: rgba(234,234,240,.75);
+        font-size:13px;
+        line-height:1.25;
+        text-align:right;
+      }
+      .m-num b{ color: var(--mm-gold); font-weight:980; }
+
+      .stack{
+        margin-top:14px;
+        border:1px solid rgba(255,255,255,.14);
+        background: rgba(0,0,0,.20);
+        border-radius:18px;
+        padding:12px 12px 10px;
+        overflow:hidden;
+      }
+      .stack-title{
+        margin:0 0 10px;
+        font-weight:950;
+        font-size:14px;
+        letter-spacing:.02em;
+        text-transform:uppercase;
+        color: rgba(234,234,240,.82);
+      }
+      .stack-row{
+        display:flex;
+        flex-wrap:wrap;
+        gap:10px;
+      }
+      .chip{
+        border:1px solid rgba(255,255,255,.12);
+        background: rgba(255,255,255,.06);
+        border-radius:999px;
+        padding:8px 10px;
+        font-weight:900;
+        font-size:12px;
+        color: rgba(234,234,240,.88);
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+      }
+      .chip .pip{
+        width:7px;height:7px;border-radius:99px;
+        background: rgba(255,204,102,.80);
+        box-shadow:0 0 0 6px rgba(255,204,102,.10);
+      }
+
     </style>
   </head>
 
@@ -332,6 +577,7 @@
       </div>
 
       <div class="hero">
+        <div class="hero-glow" aria-hidden="true"></div>
         <h1>Thanks for coming by 👋</h1>
         <p class="lead">
           This is a small showroom of <strong>AI chatbots for real businesses</strong>.
@@ -370,7 +616,138 @@
             <span class="tag"><span class="mini"></span>Analytics + <b>insights</b></span>
             <span class="tag"><span class="mini"></span>Website upgrades that <b>convert</b></span>
           </div>
+        
+      <div class="section" id="capabilities">
+        <h2>What these bots can do</h2>
+        <p class="sub">
+          Think of it as a front-desk + sales assistant that never sleeps. Built to match your business, your workflow, and your vibe.
+        </p>
+
+        <div class="split">
+          <div class="cap-grid">
+            <div class="cap">
+              <div class="cap-top">
+                <div class="cap-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M4 7h16v10H4V7Z" stroke="white" stroke-width="1.6" />
+                    <path d="M7 10h6M7 13h10" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="cap-title">Lead capture that actually converts</div>
+              </div>
+              <p class="cap-desc">Collects the right info, qualifies the job, and sends it to you cleanly. No wall-of-text leads.</p>
+            </div>
+
+            <div class="cap">
+              <div class="cap-top">
+                <div class="cap-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 3v4M17 3v4M4 9h16v11H4V9Z" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M7 13h4" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="cap-title">Booking, callbacks, & follow-ups</div>
+              </div>
+              <p class="cap-desc">Schedules, confirms, and follows up. Works after-hours so you wake up to booked business.</p>
+            </div>
+
+            <div class="cap">
+              <div class="cap-top">
+                <div class="cap-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3v18M5 8h10a4 4 0 0 1 0 8H5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="cap-title">Quotes, estimates, and triage</div>
+              </div>
+              <p class="cap-desc">Guides customers through questions and can request photos for faster estimates and better accuracy.</p>
+            </div>
+
+            <div class="cap">
+              <div class="cap-top">
+                <div class="cap-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 14l-2 2 2 2M17 10l2-2-2-2" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 7l-4 10" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="cap-title">Integrations & automations</div>
+              </div>
+              <p class="cap-desc">Connects to forms, CRMs, spreadsheets, inboxes, calendars, and custom APIs. If it has a webhook, we’re friends.</p>
+            </div>
+
+            <div class="cap">
+              <div class="cap-top">
+                <div class="cap-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3l8 5v8l-8 5-8-5V8l8-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>
+                    <path d="M12 8v8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M8.5 10.5h7" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="cap-title">Fast website upgrades</div>
+              </div>
+              <p class="cap-desc">Landing pages, forms, SEO basics, and conversion fixes so the bot isn’t carrying the whole operation alone.</p>
+            </div>
+
+            <div class="cap">
+              <div class="cap-top">
+                <div class="cap-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 4a8 8 0 1 0 8 8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M12 12l6-6" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M18 6h2v2" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="cap-title">Analytics & insight loops</div>
+              </div>
+              <p class="cap-desc">Track what customers ask, where they drop off, and what turns into revenue. Then we tune the bot.</p>
+            </div>
+          </div>
+
+          <div>
+            <div class="metrics" id="metrics">
+              <h3>Delivery stats</h3>
+
+              <div class="metric">
+                <div class="m-num" data-count="24" data-suffix="hr" data-prefix="&lt;">0</div>
+                <div class="m-label">Initial setup<br/>target</div>
+              </div>
+
+              <div class="metric">
+                <div class="m-num" data-count="7" data-suffix="d" data-prefix="&lt;">0</div>
+                <div class="m-label">Customization<br/>window</div>
+              </div>
+
+              <div class="metric">
+                <div class="m-num" data-count="24" data-suffix="/7" data-prefix="">0</div>
+                <div class="m-label">After-hours<br/>coverage</div>
+              </div>
+
+              <div class="metric">
+                <div class="m-num" data-count="0" data-suffix="" data-prefix="">∞</div>
+                <div class="m-label">No lock-in<br/>ever</div>
+              </div>
+            </div>
+
+            <div class="stack">
+              <div class="stack-title">Trusted stack</div>
+              <div class="stack-row">
+                <span class="chip"><span class="pip"></span>Netlify</span>
+                <span class="chip"><span class="pip"></span>Supabase</span>
+                <span class="chip"><span class="pip"></span>TypeScript</span>
+                <span class="chip"><span class="pip"></span>AI Widget</span>
+                <span class="chip"><span class="pip"></span>Webhooks</span>
+                <span class="chip"><span class="pip"></span>SMS / Email</span>
+                <span class="chip"><span class="pip"></span>Calendars</span>
+                <span class="chip"><span class="pip"></span>CRMs</span>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+</div>
       </div>
 
       <div class="section" id="demoSection">
