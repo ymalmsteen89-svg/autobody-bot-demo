@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Metal Master · Business Chatbot Demos</title>
+    <title>Metal Master · AI Chatbot Demos</title>
     <link rel="stylesheet" href="./widget.css" />
     <style>
       :root{
@@ -17,7 +17,6 @@
         --mm-red2:#ff2a2a;
         --mm-gold:#ffcc66;
       }
-
       *{ box-sizing:border-box; }
       html,body{ height:100%; }
 
@@ -32,10 +31,9 @@
           radial-gradient(900px 700px at 50% 120%, rgba(255,255,255,.06), transparent 45%),
           var(--bg);
       }
+      .wrap{ max-width:1120px; margin:0 auto; }
 
-      .wrap{ max-width:1100px; margin:0 auto; }
-
-      /* Metal Master brand */
+      /* Brand bar */
       .brandbar{
         display:flex;
         align-items:center;
@@ -51,28 +49,16 @@
         color:var(--text);
       }
       .logo{
-        width:34px;
-        height:34px;
-        border-radius:12px;
+        width:36px;height:36px;
+        border-radius:14px;
         background: linear-gradient(180deg, var(--mm-red2), #9d0000);
         box-shadow: 0 10px 26px rgba(212,0,0,.35);
-        display:grid;
-        place-items:center;
+        display:grid; place-items:center;
         border:1px solid rgba(255,255,255,.12);
       }
       .logo svg{ width:20px; height:20px; opacity:.95; }
-      .brandname{
-        font-weight:950;
-        letter-spacing:.02em;
-        line-height:1.05;
-      }
-      .brandsub{
-        display:block;
-        font-size:12px;
-        color:var(--muted);
-        font-weight:700;
-        margin-top:2px;
-      }
+      .brandname{ font-weight:980; letter-spacing:.02em; line-height:1.05; }
+      .brandsub{ display:block; font-size:12px; color:var(--muted); font-weight:700; margin-top:2px; }
 
       .pill{
         border:1px solid var(--border);
@@ -94,48 +80,70 @@
 
       /* Hero */
       .hero{
-        border:1px solid var(--border);
+        border:1px solid rgba(255,255,255,.16);
         background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
         border-radius:22px;
-        padding:24px;
+        padding:22px;
         box-shadow:0 20px 55px rgba(0,0,0,.38);
         overflow:hidden;
         position:relative;
       }
+      .hero-glow{
+        position:absolute;
+        inset:-3px;
+        background: conic-gradient(from 180deg,
+          rgba(255,42,42,.0),
+          rgba(255,42,42,.28),
+          rgba(255,204,102,.22),
+          rgba(255,42,42,.28),
+          rgba(255,42,42,.0)
+        );
+        filter: blur(14px);
+        opacity:.55;
+        animation: glowspin 9s linear infinite;
+        pointer-events:none;
+      }
+      @keyframes glowspin{ from{ transform: rotate(0deg);} to{ transform: rotate(360deg);} }
       .hero::after{
         content:"";
         position:absolute; inset:-2px;
         background:
-          radial-gradient(700px 220px at 15% 10%, rgba(255,42,42,.12), transparent 55%),
-          radial-gradient(700px 220px at 80% 10%, rgba(255,204,102,.08), transparent 55%);
+          radial-gradient(760px 240px at 12% 10%, rgba(255,42,42,.12), transparent 55%),
+          radial-gradient(760px 240px at 86% 10%, rgba(255,204,102,.09), transparent 55%);
         pointer-events:none;
         opacity:.9;
       }
       .hero > *{ position:relative; z-index:1; }
 
-      h1{
-        margin:10px 0 10px;
-        font-size:30px;
-        letter-spacing:.01em;
+      .hero-top{
+        display:grid;
+        grid-template-columns: 1.2fr .8fr;
+        gap:14px;
+        align-items:stretch;
       }
+      @media (max-width: 980px){
+        .hero-top{ grid-template-columns: 1fr; }
+      }
+
+      h1{ margin:6px 0 10px; font-size:30px; letter-spacing:.01em; }
       .lead{
-        margin:0 0 14px;
-        max-width:820px;
+        margin:0 0 12px;
         color:var(--muted);
         font-size:15px;
         line-height:1.5;
       }
       .lead strong{ color:rgba(255,255,255,.92); }
+
       .value{
         display:inline-flex;
         align-items:center;
         gap:10px;
-        margin-top:10px;
+        margin-top:6px;
         padding:10px 12px;
         border-radius:16px;
         border:1px solid rgba(255,255,255,.14);
         background: rgba(0,0,0,.18);
-        font-weight:900;
+        font-weight:950;
       }
       .value .spark{
         width:10px;height:10px;border-radius:99px;
@@ -143,31 +151,100 @@
         box-shadow:0 0 0 8px rgba(255,204,102,.10);
       }
 
+      .howto{
+        border:1px solid rgba(255,255,255,.14);
+        background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(255,255,255,.04));
+        border-radius:18px;
+        padding:14px;
+        box-shadow: 0 18px 38px rgba(0,0,0,.32);
+      }
+      .howto h3{
+        margin:0 0 8px;
+        font-size:14px;
+        letter-spacing:.02em;
+        text-transform:uppercase;
+        opacity:.9;
+      }
+      .howto ol{
+        margin:0;
+        padding-left:18px;
+        color:rgba(234,234,240,.80);
+        font-size:13px;
+        line-height:1.4;
+      }
+      .howto b{ color:rgba(255,255,255,.92); }
+
+      /* Top launch buttons */
+      .launch-grid{
+        margin-top:12px;
+        display:grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap:10px;
+      }
+      @media (max-width: 980px){
+        .launch-grid{ grid-template-columns: 1fr; }
+      }
+
+      /* Buttons */
+      .btn{
+        appearance:none;
+        border:1px solid var(--border);
+        background:rgba(255,255,255,.06);
+        color:var(--text);
+        padding:12px 14px;
+        border-radius:14px;
+        cursor:pointer;
+        font-weight:950;
+        font-size:14px;
+        transition: transform .08s ease, background .15s ease, box-shadow .15s ease, opacity .15s ease;
+        text-decoration:none;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+        min-height:46px;
+        width:100%;
+      }
+      .btn:hover{ background:rgba(255,255,255,.12); transform: translateY(-1px); }
+      .btn:active{ transform: translateY(0); }
+
+      .btn-primary{
+        border:none;
+        background: linear-gradient(180deg, var(--mm-red2), #b80000);
+        box-shadow: 0 10px 24px rgba(212,0,0,.35);
+        position:relative;
+        overflow:hidden;
+      }
+      .btn-primary::after{
+        content:"";
+        position:absolute; inset:-2px;
+        background: radial-gradient(240px 90px at 20% 20%, rgba(255,255,255,.22), transparent 60%);
+        opacity:.8;
+        transform: translateX(-40%);
+        transition: transform .45s ease;
+        pointer-events:none;
+      }
+      .btn-primary:hover::after{ transform: translateX(25%); }
+
+      .btn-ghost{ background: rgba(0,0,0,.22); }
+
       /* Scrolling feature marquee */
       .marquee{
-        margin-top:16px;
+        margin-top:14px;
         border:1px solid rgba(255,255,255,.12);
         background: rgba(0,0,0,.22);
         border-radius:16px;
         overflow:hidden;
         position:relative;
       }
-      .marquee::before,
-      .marquee::after{
+      .marquee::before,.marquee::after{
         content:"";
         position:absolute; top:0; bottom:0;
-        width:64px;
-        pointer-events:none;
-        z-index:2;
+        width:64px; pointer-events:none; z-index:2;
       }
-      .marquee::before{
-        left:0;
-        background: linear-gradient(90deg, rgba(7,7,9,.95), transparent);
-      }
-      .marquee::after{
-        right:0;
-        background: linear-gradient(270deg, rgba(7,7,9,.95), transparent);
-      }
+      .marquee::before{ left:0; background: linear-gradient(90deg, rgba(7,7,9,.95), transparent); }
+      .marquee::after{ right:0; background: linear-gradient(270deg, rgba(7,7,9,.95), transparent); }
+
       .marquee-track{
         display:flex;
         gap:26px;
@@ -177,63 +254,21 @@
         animation: scroll 26s linear infinite;
       }
       .marquee:hover .marquee-track{ animation-play-state:paused; }
-      @keyframes scroll{
-        from{ transform: translateX(0); }
-        to{ transform: translateX(-50%); }
-      }
+      @keyframes scroll{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+
       .tag{
         display:inline-flex;
         align-items:center;
         gap:8px;
-        font-weight:850;
+        font-weight:900;
         font-size:13px;
         color:rgba(255,255,255,.88);
         opacity:.95;
       }
-      .tag b{
-        color:var(--mm-gold);
-        font-weight:950;
-      }
+      .tag b{ color:var(--mm-gold); font-weight:980; }
       .tag .mini{
         width:7px;height:7px;border-radius:99px;
         background: rgba(255,255,255,.55);
-      }
-
-      /* Buttons */
-      .cta-row{
-        display:flex;
-        flex-wrap:wrap;
-        gap:10px;
-        margin-top:14px;
-      }
-      .btn{
-        appearance:none;
-        border:1px solid var(--border);
-        background:rgba(255,255,255,.06);
-        color:var(--text);
-        padding:12px 16px;
-        border-radius:14px;
-        cursor:pointer;
-        font-weight:900;
-        font-size:14px;
-        transition: transform .08s ease, background .15s ease, box-shadow .15s ease, opacity .15s ease;
-        text-decoration:none;
-        display:inline-flex;
-        align-items:center;
-        gap:10px;
-      }
-      .btn:hover{ background:rgba(255,255,255,.12); transform: translateY(-1px); }
-      .btn:active{ transform: translateY(0); }
-
-      .btn-primary{
-        border:none;
-        background: linear-gradient(180deg, var(--mm-red2), #b80000);
-        box-shadow: 0 10px 24px rgba(212,0,0,.35);
-      }
-      .btn-primary:hover{ box-shadow: 0 14px 30px rgba(212,0,0,.40); }
-
-      .btn-ghost{
-        background: rgba(0,0,0,.22);
       }
 
       /* Sections + cards */
@@ -252,19 +287,28 @@
         border-radius:18px;
         padding:16px;
         box-shadow:0 16px 34px rgba(0,0,0,.28);
+        position:relative;
+        overflow:hidden;
       }
-      .name{ font-weight:950; font-size:16px; margin:0 0 6px; }
-      .meta{ margin:0 0 12px; opacity:.9; font-size:13px; line-height:1.35; color:rgba(234,234,240,.82); }
+      .card::before{
+        content:"";
+        position:absolute; inset:-1px;
+        border-radius:18px;
+        background: linear-gradient(135deg, rgba(255,42,42,.22), rgba(255,204,102,.14), rgba(255,255,255,0));
+        opacity:.22;
+        pointer-events:none;
+      }
+      .card > *{ position:relative; z-index:1; }
+
+      .name{ font-weight:980; font-size:16px; margin:0 0 6px; }
+      .meta{ margin:0 0 12px; opacity:.92; font-size:13px; line-height:1.35; color:rgba(234,234,240,.82); }
       .pillrow{ display:flex; flex-wrap:wrap; gap:8px; }
 
       .status{ margin-top:14px; font-size:13px; opacity:.9; color:rgba(234,234,240,.85); }
       .footer{ margin-top:22px; opacity:.6; font-size:12px; color:rgba(234,234,240,.70); }
 
       /* Form */
-      form .row{
-        display:grid;
-        gap:10px;
-      }
+      form .row{ display:grid; gap:10px; }
       .field{
         width:100%;
         padding:12px;
@@ -276,10 +320,7 @@
         outline:none;
       }
       .field::placeholder{ color:rgba(234,234,240,.50); font-weight:650; }
-      .field:focus{
-        border-color: rgba(255,42,42,.55);
-        box-shadow: 0 0 0 6px rgba(255,42,42,.10);
-      }
+      .field:focus{ border-color: rgba(255,42,42,.55); box-shadow: 0 0 0 6px rgba(255,42,42,.10); }
 
       .notice{
         border:1px dashed rgba(255,255,255,.18);
@@ -301,262 +342,45 @@
         color: rgba(255,220,220,.92);
       }
 
-      /* Small screens */
+      /* Launcher pulse */
+      @keyframes ccPulse {
+        0%   { transform: scale(1);   box-shadow: 0 0 0 0 rgba(255,42,42,.45); }
+        55%  { transform: scale(1.06); box-shadow: 0 0 0 18px rgba(255,42,42,.0); }
+        100% { transform: scale(1);   box-shadow: 0 0 0 0 rgba(255,42,42,.0); }
+      }
+      #cc-launcher.cc-pulse{ animation: ccPulse 650ms ease-out 1; }
+
+      /* Opaque + always-on-top chat */
+      #cc-panel{
+        position: fixed !important;
+        z-index: 2147483000 !important;
+        opacity: 1 !important;
+        background: linear-gradient(180deg, rgba(15,15,20,0.995), rgba(10,10,14,0.99)) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,42,42,0.15) inset;
+        pointer-events: auto !important;
+      }
+      #cc-launcher{
+        position: fixed !important;
+        z-index: 2147483001 !important;
+        pointer-events: auto !important;
+      }
+      /* These class hooks may or may not exist, but safe if they do */
+      #cc-panel .cc-messages{ background: rgba(0,0,0,0.35) !important; }
+      #cc-panel .cc-bubble{ background: rgba(255,255,255,0.10) !important; border: 1px solid rgba(255,255,255,0.12); }
+      #cc-panel .cc-input{ background: rgba(8,8,10,0.98) !important; border-top: 1px solid rgba(255,255,255,0.14); }
+
       @media (max-width: 420px){
         body{ padding:16px; }
         h1{ font-size:26px; }
       }
-
-      /* Extra polish */
-      .hero{
-        border: 1px solid rgba(255,255,255,.16);
-      }
-      .hero-glow{
-        position:absolute;
-        inset:-3px;
-        background: conic-gradient(from 180deg,
-          rgba(255,42,42,.0),
-          rgba(255,42,42,.28),
-          rgba(255,204,102,.22),
-          rgba(255,42,42,.28),
-          rgba(255,42,42,.0)
-        );
-        filter: blur(14px);
-        opacity:.55;
-        animation: glowspin 9s linear infinite;
-        pointer-events:none;
-      }
-      @keyframes glowspin{
-        from{ transform: rotate(0deg); }
-        to{ transform: rotate(360deg); }
-      }
-
-      .cta-row{
-        display:grid;
-        grid-template-columns: auto auto 1fr;
-        align-items: stretch;
-        gap: 12px;
-      }
-      @media (max-width: 860px){
-        .cta-row{ grid-template-columns: 1fr; }
-      }
-
-      .cta-tip{
-        border: 1px solid rgba(255,255,255,.14);
-        background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(255,255,255,.04));
-        border-radius: 16px;
-        padding: 12px 14px;
-        display:flex;
-        gap: 12px;
-        align-items:flex-start;
-        box-shadow: 0 18px 38px rgba(0,0,0,.32);
-      }
-      .cta-tip .icon{
-        width: 34px;
-        height: 34px;
-        border-radius: 14px;
-        background: rgba(255,42,42,.12);
-        border: 1px solid rgba(255,42,42,.25);
-        display:grid;
-        place-items:center;
-        flex: 0 0 auto;
-        box-shadow: 0 10px 22px rgba(212,0,0,.18);
-      }
-      .cta-tip .icon svg{ width: 18px; height: 18px; opacity: .95; }
-      .cta-tip .title{
-        font-weight: 950;
-        letter-spacing: .01em;
-        margin: 1px 0 4px;
-      }
-      .cta-tip .steps{
-        margin: 0;
-        padding-left: 16px;
-        color: rgba(234,234,240,.78);
-        font-size: 13px;
-        line-height: 1.35;
-      }
-      .cta-tip .steps b{ color: rgba(255,255,255,.90); }
-
-      .btn{
-        justify-content:center;
-        min-height: 46px;
-      }
-      .btn-primary{
-        position: relative;
-        overflow: hidden;
-      }
-      .btn-primary::after{
-        content:"";
-        position:absolute;
-        inset:-2px;
-        background: radial-gradient(220px 80px at 20% 20%, rgba(255,255,255,.20), transparent 60%);
-        opacity:.75;
-        transform: translateX(-40%);
-        transition: transform .45s ease;
-        pointer-events:none;
-      }
-      .btn-primary:hover::after{ transform: translateX(25%); }
-
-      /* Make demo cards feel more “elite” */
-      .card{
-        position:relative;
-      }
-      .card::before{
-        content:"";
-        position:absolute;
-        inset:-1px;
-        border-radius:18px;
-        background: linear-gradient(135deg, rgba(255,42,42,.22), rgba(255,204,102,.14), rgba(255,255,255,0));
-        opacity:.22;
-        pointer-events:none;
-      }
-      .card > *{ position:relative; z-index:1; }
-
-      /* Capabilities + metrics + stack */
-      .split{
-        display:grid;
-        grid-template-columns: 1.2fr .8fr;
-        gap:14px;
-        align-items:stretch;
-      }
-      @media (max-width: 960px){
-        .split{ grid-template-columns: 1fr; }
-      }
-
-      .cap-grid{
-        display:grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap:14px;
-      }
-
-      .cap{
-        border:1px solid rgba(255,255,255,.14);
-        background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-        border-radius:18px;
-        padding:14px 14px 13px;
-        box-shadow: 0 16px 34px rgba(0,0,0,.28);
-        position:relative;
-        overflow:hidden;
-      }
-      .cap::after{
-        content:"";
-        position:absolute;
-        inset:-2px;
-        background: radial-gradient(360px 120px at 20% 10%, rgba(255,42,42,.10), transparent 55%),
-                    radial-gradient(360px 120px at 80% 10%, rgba(255,204,102,.08), transparent 55%);
-        opacity:.75;
-        pointer-events:none;
-      }
-      .cap > *{ position:relative; z-index:1; }
-
-      .cap-top{
-        display:flex;
-        align-items:center;
-        gap:10px;
-        margin-bottom:8px;
-      }
-      .cap-ico{
-        width:36px;height:36px;border-radius:14px;
-        display:grid;place-items:center;
-        background: rgba(255,42,42,.12);
-        border: 1px solid rgba(255,42,42,.25);
-        box-shadow: 0 10px 22px rgba(212,0,0,.16);
-        flex:0 0 auto;
-      }
-      .cap-ico svg{ width:18px;height:18px; opacity:.95; }
-      .cap-title{
-        font-weight:950;
-        letter-spacing:.01em;
-        margin:0;
-      }
-      .cap-desc{
-        margin:0;
-        color: rgba(234,234,240,.78);
-        font-size:13px;
-        line-height:1.4;
-      }
-
-      .metrics{
-        border:1px solid rgba(255,255,255,.14);
-        background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(255,255,255,.04));
-        border-radius:18px;
-        padding:14px;
-        box-shadow: 0 18px 38px rgba(0,0,0,.32);
-      }
-      .metrics h3{
-        margin:0 0 10px;
-        font-size:14px;
-        letter-spacing:.02em;
-        text-transform:uppercase;
-        opacity:.9;
-      }
-      .metric{
-        display:flex;
-        align-items:baseline;
-        justify-content:space-between;
-        gap:12px;
-        padding:10px 0;
-        border-top:1px solid rgba(255,255,255,.10);
-      }
-      .metric:first-of-type{ border-top:none; padding-top:4px; }
-      .m-num{
-        font-weight:980;
-        font-size:22px;
-        letter-spacing:.01em;
-      }
-      .m-label{
-        color: rgba(234,234,240,.75);
-        font-size:13px;
-        line-height:1.25;
-        text-align:right;
-      }
-      .m-num b{ color: var(--mm-gold); font-weight:980; }
-
-      .stack{
-        margin-top:14px;
-        border:1px solid rgba(255,255,255,.14);
-        background: rgba(0,0,0,.20);
-        border-radius:18px;
-        padding:12px 12px 10px;
-        overflow:hidden;
-      }
-      .stack-title{
-        margin:0 0 10px;
-        font-weight:950;
-        font-size:14px;
-        letter-spacing:.02em;
-        text-transform:uppercase;
-        color: rgba(234,234,240,.82);
-      }
-      .stack-row{
-        display:flex;
-        flex-wrap:wrap;
-        gap:10px;
-      }
-      .chip{
-        border:1px solid rgba(255,255,255,.12);
-        background: rgba(255,255,255,.06);
-        border-radius:999px;
-        padding:8px 10px;
-        font-weight:900;
-        font-size:12px;
-        color: rgba(234,234,240,.88);
-        display:inline-flex;
-        align-items:center;
-        gap:8px;
-      }
-      .chip .pip{
-        width:7px;height:7px;border-radius:99px;
-        background: rgba(255,204,102,.80);
-        box-shadow:0 0 0 6px rgba(255,204,102,.10);
-      }
-
     </style>
   </head>
 
   <body>
     <div class="wrap">
-
       <div class="brandbar">
         <a class="brand" href="#" aria-label="Metal Master">
           <span class="logo" aria-hidden="true">
@@ -578,22 +402,38 @@
 
       <div class="hero">
         <div class="hero-glow" aria-hidden="true"></div>
-        <h1>Thanks for coming by 👋</h1>
-        <p class="lead">
-          This is a small showroom of <strong>AI chatbots for real businesses</strong>.
-          Try a demo below to see the widget in action, or contact <strong>Ryan</strong> for a custom demo built for your company.
-          Need help with your website, lead capture, automations, or something custom? That’s all fair game.
-        </p>
 
-        <div class="value"><span class="spark" aria-hidden="true"></span> Fast setup, no lock-in — fully customizable.</div>
+        <div class="hero-top">
+          <div>
+            <h1>AI chatbots that feel like a real front desk 🤘</h1>
+            <p class="lead">
+              Thanks for coming by! This is a showroom of <strong>business-ready AI chatbots</strong>.
+              Pick a demo to watch it work, or contact <strong>Ryan</strong> for a custom build for your company.
+              Websites, lead capture, automations, integrations, or “that weird thing you’ve always wanted” are all on the menu.
+            </p>
 
-        <div class="cta-row">
-          <button class="btn btn-primary" id="btnTryDemo" type="button">Try a demo</button>
-          <a class="btn btn-ghost" href="mailto:Ryan@metalmasterapp.com?subject=Custom%20Chatbot%20Demo">Email Ryan</a>
+            <div class="value"><span class="spark" aria-hidden="true"></span> Fast setup, no lock-in — fully customizable.</div>
+
+            <div class="launch-grid" aria-label="Launch a demo">
+              <button class="btn btn-primary" data-launch="demo-autobody">Launch Auto Body</button>
+              <button class="btn btn-primary" data-launch="wesbecker-automotive">Launch Wesbecker</button>
+              <button class="btn btn-primary" data-launch="demo-plumbing-hvac">Launch Plumbing/HVAC</button>
+              <a class="btn btn-ghost" href="mailto:Ryan@metalmasterapp.com?subject=Custom%20Chatbot%20Demo">Email Ryan</a>
+            </div>
+          </div>
+
+          <div class="howto" role="note" aria-label="How to use the demo">
+            <h3>How to use the demo</h3>
+            <ol>
+              <li>Click a <b>Launch</b> button.</li>
+              <li>The chat opens automatically. If you close it, use the <b>chat bubble</b> in the lower-right.</li>
+              <li>Try “quote,” “book,” “hours,” or “upload a photo.”</li>
+            </ol>
+          </div>
         </div>
 
         <div class="marquee" aria-label="Bot capabilities marquee">
-          <div class="marquee-track" id="marqueeTrack">
+          <div class="marquee-track">
             <span class="tag"><span class="mini"></span><b>24/7</b> answers</span>
             <span class="tag"><span class="mini"></span>Instant <b>quotes</b></span>
             <span class="tag"><span class="mini"></span>Smart <b>lead capture</b></span>
@@ -605,6 +445,7 @@
             <span class="tag"><span class="mini"></span>Analytics + <b>insights</b></span>
             <span class="tag"><span class="mini"></span>Website upgrades that <b>convert</b></span>
 
+            <!-- duplicate for seamless loop -->
             <span class="tag"><span class="mini"></span><b>24/7</b> answers</span>
             <span class="tag"><span class="mini"></span>Instant <b>quotes</b></span>
             <span class="tag"><span class="mini"></span>Smart <b>lead capture</b></span>
@@ -615,146 +456,60 @@
             <span class="tag"><span class="mini"></span>CRM-ready <b>handoff</b></span>
             <span class="tag"><span class="mini"></span>Analytics + <b>insights</b></span>
             <span class="tag"><span class="mini"></span>Website upgrades that <b>convert</b></span>
-          </div>
-        
-      <div class="section" id="capabilities">
-        <h2>What these bots can do</h2>
-        <p class="sub">
-          Think of it as a front-desk + sales assistant that never sleeps. Built to match your business, your workflow, and your vibe.
-        </p>
-
-        <div class="split">
-          <div class="cap-grid">
-            <div class="cap">
-              <div class="cap-top">
-                <div class="cap-ico" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M4 7h16v10H4V7Z" stroke="white" stroke-width="1.6" />
-                    <path d="M7 10h6M7 13h10" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <div class="cap-title">Lead capture that actually converts</div>
-              </div>
-              <p class="cap-desc">Collects the right info, qualifies the job, and sends it to you cleanly. No wall-of-text leads.</p>
-            </div>
-
-            <div class="cap">
-              <div class="cap-top">
-                <div class="cap-ico" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M7 3v4M17 3v4M4 9h16v11H4V9Z" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M7 13h4" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <div class="cap-title">Booking, callbacks, & follow-ups</div>
-              </div>
-              <p class="cap-desc">Schedules, confirms, and follows up. Works after-hours so you wake up to booked business.</p>
-            </div>
-
-            <div class="cap">
-              <div class="cap-top">
-                <div class="cap-ico" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M12 3v18M5 8h10a4 4 0 0 1 0 8H5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-                <div class="cap-title">Quotes, estimates, and triage</div>
-              </div>
-              <p class="cap-desc">Guides customers through questions and can request photos for faster estimates and better accuracy.</p>
-            </div>
-
-            <div class="cap">
-              <div class="cap-top">
-                <div class="cap-ico" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M7 14l-2 2 2 2M17 10l2-2-2-2" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M14 7l-4 10" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <div class="cap-title">Integrations & automations</div>
-              </div>
-              <p class="cap-desc">Connects to forms, CRMs, spreadsheets, inboxes, calendars, and custom APIs. If it has a webhook, we’re friends.</p>
-            </div>
-
-            <div class="cap">
-              <div class="cap-top">
-                <div class="cap-ico" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M12 3l8 5v8l-8 5-8-5V8l8-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>
-                    <path d="M12 8v8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M8.5 10.5h7" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <div class="cap-title">Fast website upgrades</div>
-              </div>
-              <p class="cap-desc">Landing pages, forms, SEO basics, and conversion fixes so the bot isn’t carrying the whole operation alone.</p>
-            </div>
-
-            <div class="cap">
-              <div class="cap-top">
-                <div class="cap-ico" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M12 4a8 8 0 1 0 8 8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M12 12l6-6" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M18 6h2v2" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-                <div class="cap-title">Analytics & insight loops</div>
-              </div>
-              <p class="cap-desc">Track what customers ask, where they drop off, and what turns into revenue. Then we tune the bot.</p>
-            </div>
-          </div>
-
-          <div>
-            <div class="metrics" id="metrics">
-              <h3>Delivery stats</h3>
-
-              <div class="metric">
-                <div class="m-num" data-count="24" data-suffix="hr" data-prefix="&lt;">0</div>
-                <div class="m-label">Initial setup<br/>target</div>
-              </div>
-
-              <div class="metric">
-                <div class="m-num" data-count="7" data-suffix="d" data-prefix="&lt;">0</div>
-                <div class="m-label">Customization<br/>window</div>
-              </div>
-
-              <div class="metric">
-                <div class="m-num" data-count="24" data-suffix="/7" data-prefix="">0</div>
-                <div class="m-label">After-hours<br/>coverage</div>
-              </div>
-
-              <div class="metric">
-                <div class="m-num" data-count="0" data-suffix="" data-prefix="">∞</div>
-                <div class="m-label">No lock-in<br/>ever</div>
-              </div>
-            </div>
-
-            <div class="stack">
-              <div class="stack-title">Trusted stack</div>
-              <div class="stack-row">
-                <span class="chip"><span class="pip"></span>Netlify</span>
-                <span class="chip"><span class="pip"></span>Supabase</span>
-                <span class="chip"><span class="pip"></span>TypeScript</span>
-                <span class="chip"><span class="pip"></span>AI Widget</span>
-                <span class="chip"><span class="pip"></span>Webhooks</span>
-                <span class="chip"><span class="pip"></span>SMS / Email</span>
-                <span class="chip"><span class="pip"></span>Calendars</span>
-                <span class="chip"><span class="pip"></span>CRMs</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
-</div>
+      <div class="section" id="capabilities">
+        <h2>What these bots can do</h2>
+        <p class="sub">
+          Not a toy. Not a template. This is production-style UX built to match your workflow and make customers feel taken care of.
+        </p>
+
+        <div class="grid">
+          <div class="card">
+            <div class="name">Lead capture that converts</div>
+            <div class="meta">Collects the right info, qualifies the job, and sends it to you cleanly. No wall-of-text leads.</div>
+          </div>
+          <div class="card">
+            <div class="name">Booking, callbacks, follow-ups</div>
+            <div class="meta">After-hours scheduling and lead follow-up, so you wake up to booked work.</div>
+          </div>
+          <div class="card">
+            <div class="name">Quotes, estimates, and triage</div>
+            <div class="meta">Guides customers through questions and can request photos for faster estimates.</div>
+          </div>
+          <div class="card">
+            <div class="name">Integrations & automations</div>
+            <div class="meta">Webhooks, CRMs, sheets, inboxes, calendars, and custom APIs. If it’s connectable, we can connect it.</div>
+          </div>
+          <div class="card">
+            <div class="name">Fast website upgrades</div>
+            <div class="meta">Landing pages, forms, SEO basics, and conversion fixes so the bot isn’t carrying the whole operation.</div>
+          </div>
+          <div class="card">
+            <div class="name">Analytics & insight loops</div>
+            <div class="meta">Track what customers ask, where they drop off, and tune the bot based on real behavior.</div>
+          </div>
+        </div>
+
+        <div class="section" style="margin-top:14px">
+          <h2 style="font-size:16px;margin:0 0 10px">Trusted stack</h2>
+          <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:10px">
+            <div class="card" style="padding:12px"><div class="name" style="font-size:14px;margin:0">Netlify</div><div class="meta" style="margin:6px 0 0">Fast deploys + Functions</div></div>
+            <div class="card" style="padding:12px"><div class="name" style="font-size:14px;margin:0">Supabase</div><div class="meta" style="margin:6px 0 0">DB + auth + storage</div></div>
+            <div class="card" style="padding:12px"><div class="name" style="font-size:14px;margin:0">TypeScript</div><div class="meta" style="margin:6px 0 0">Real engineering</div></div>
+            <div class="card" style="padding:12px"><div class="name" style="font-size:14px;margin:0">Webhooks</div><div class="meta" style="margin:6px 0 0">Integrate anything</div></div>
+            <div class="card" style="padding:12px"><div class="name" style="font-size:14px;margin:0">SMS / Email</div><div class="meta" style="margin:6px 0 0">Follow-ups & alerts</div></div>
+            <div class="card" style="padding:12px"><div class="name" style="font-size:14px;margin:0">Calendars / CRMs</div><div class="meta" style="margin:6px 0 0">Real pipeline</div></div>
+          </div>
+        </div>
       </div>
 
       <div class="section" id="demoSection">
         <h2>Demo chatbots</h2>
         <p class="sub">
-          Each demo uses the same codebase with different configuration.
-          Launch one and look for the chat bubble in the bottom-right corner.
+          Each demo uses the same codebase with different configuration. Launch one and the chat opens automatically.
         </p>
 
         <div class="grid" id="demoGrid"></div>
@@ -763,16 +518,10 @@
 
       <div class="section" id="contactSection">
         <h2>Contact Ryan</h2>
-        <p class="sub">
-          Want a custom demo or help with your site? Send a quick message and I’ll get back to you.
-        </p>
+        <p class="sub">Want a custom demo or help with your site? Send a quick message and I’ll get back to you.</p>
 
         <div id="contactWrapper">
-          <form class="card" id="contactForm" method="POST" action="/.netlify/functions/new-lead">
-            <input type="hidden" name="leadType" value="contact" />
-            <input type="hidden" name="source" value="demo-hub" />
-            <input type="hidden" name="page" value="/index.html" />
-
+          <form class="card" id="contactForm">
             <div class="row">
               <input class="field" required name="name" placeholder="Your name" autocomplete="name" />
               <input class="field" required name="email" type="email" placeholder="Your email" autocomplete="email" />
@@ -781,7 +530,7 @@
 
               <button class="btn btn-primary" id="contactSubmit" type="submit">Send message</button>
               <div class="notice" id="contactNotice">
-                Tip: If you prefer email, hit <strong>Email Ryan</strong> above.
+                Tip: If you prefer email, use the <strong>Email Ryan</strong> button above.
               </div>
             </div>
           </form>
@@ -789,22 +538,46 @@
       </div>
 
       <div class="footer">
-        Shared API endpoint: <code>/.netlify/functions/new-lead</code>
+        Leads endpoint: <code>/.netlify/functions/new-lead</code>
       </div>
     </div>
 
     <script>
+      // ---- Demo catalog ----
       const DEMOS = [
-        { id:"demo-autobody", title:"Demo Auto Body", phone:"303-555-1212", address:"Denver Metro (demo)", accent:"#d40000", kind:"autobody" },
-        { id:"wesbecker-automotive", title:"Wesbecker Automotive", phone:"720-938-7000", address:"6402 S Cedar St, Littleton, CO 80120", accent:"#d40000", kind:"automotive" },
-        { id:"demo-plumbing-hvac", title:"Summit Plumbing & HVAC", phone:"303-555-0198", address:"Front Range Service Area (demo)", accent:"#0b7285", kind:"home_service" },
+        {
+          id: "demo-autobody",
+          title: "Demo Auto Body",
+          phone: "303-555-1212",
+          address: "Denver Metro (demo)",
+          accent: "#d40000",
+          kind: "autobody",
+        },
+        {
+          id: "wesbecker-automotive",
+          title: "Wesbecker Automotive",
+          phone: "720-938-7000",
+          address: "6402 S Cedar St, Littleton, CO 80120",
+          accent: "#d40000",
+          kind: "automotive",
+        },
+        {
+          id: "demo-plumbing-hvac",
+          title: "Summit Plumbing & HVAC",
+          phone: "303-555-0198",
+          address: "Front Range Service Area (demo)",
+          accent: "#0b7285",
+          kind: "home_service",
+        },
       ];
 
       let widgetScriptTag = null;
 
-      function setStatus(msg){ document.getElementById("status").textContent = msg || ""; }
+      function setStatus(msg) {
+        document.getElementById("status").textContent = msg || "";
+      }
 
-      function buildConfig(demo){
+      function buildConfig(demo) {
         return {
           shopName: demo.title,
           phoneNumber: demo.phone,
@@ -817,35 +590,71 @@
         };
       }
 
-      function unloadWidget(){
+      function unloadWidget() {
         const panel = document.getElementById("cc-panel");
         const launcher = document.getElementById("cc-launcher");
-        if(panel) panel.remove();
-        if(launcher) launcher.remove();
+        if (panel) panel.remove();
+        if (launcher) launcher.remove();
 
-        if(widgetScriptTag){
+        if (widgetScriptTag) {
           widgetScriptTag.remove();
           widgetScriptTag = null;
         }
         delete window.CRASH_CONCIERGE_CONFIG;
       }
 
-      function loadWidgetForDemo(demo){
+      function loadWidgetForDemo(demo) {
         unloadWidget();
+
         window.CRASH_CONCIERGE_CONFIG = buildConfig(demo);
 
         widgetScriptTag = document.createElement("script");
-        widgetScriptTag.src = "./widget.js?v=" + Date.now();
-        widgetScriptTag.onload = () => setStatus(`Loaded: ${demo.title} — tap the chat bubble bottom-right.`);
-        widgetScriptTag.onerror = () => setStatus("Failed to load widget.js. Check that ./widget.js exists in the publish directory.");
+        widgetScriptTag.src = "./widget.js?v=" + Date.now(); // cache-bust
+
+        widgetScriptTag.onload = () => {
+          setStatus(`Loaded: ${demo.title} — opening chat…`);
+
+          const robustClick = (el) => {
+            try { el.click(); } catch {}
+            try { el.dispatchEvent(new MouseEvent("click", { bubbles:true, cancelable:true, view:window })); } catch {}
+          };
+
+          const tryOpen = () => {
+            const launcher = document.getElementById("cc-launcher");
+            if (launcher) {
+              launcher.classList.add("cc-pulse");
+              setTimeout(() => {
+                robustClick(launcher);
+                launcher.classList.remove("cc-pulse");
+              }, 220);
+
+              // Ensure topmost
+              setTimeout(() => {
+                const panel = document.getElementById("cc-panel");
+                if (panel) { panel.style.zIndex = "2147483000"; panel.style.opacity = "1"; }
+                launcher.style.zIndex = "2147483001";
+              }, 320);
+
+              return;
+            }
+            setTimeout(tryOpen, 120);
+          };
+
+          setTimeout(tryOpen, 50);
+        };
+
+        widgetScriptTag.onerror = () => {
+          setStatus("Failed to load widget.js. Check that ./widget.js exists in the publish directory.");
+        };
+
         document.body.appendChild(widgetScriptTag);
       }
 
-      function renderDemos(){
+      function renderDemos() {
         const grid = document.getElementById("demoGrid");
         grid.innerHTML = "";
 
-        for(const demo of DEMOS){
+        for (const demo of DEMOS) {
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
@@ -864,20 +673,38 @@
 
         grid.addEventListener("click", (e) => {
           const btn = e.target.closest("button");
-          if(!btn) return;
+          if (!btn) return;
 
           const id = btn.getAttribute("data-id");
           const action = btn.getAttribute("data-action");
-          const demo = DEMOS.find(d => d.id === id);
-          if(!demo) return;
+          const demo = DEMOS.find((d) => d.id === id);
+          if (!demo) return;
 
-          if(action === "launch" || action === "reload") loadWidgetForDemo(demo);
+          if (action === "launch" || action === "reload") {
+            loadWidgetForDemo(demo);
+          }
         });
 
-        setStatus("Select a demo above to load the chatbot widget.");
+        setStatus("Pick a demo above. The chat will open automatically.");
       }
 
-      async function handleContactSubmit(e){
+      // Hero launch buttons
+      document.querySelectorAll("[data-launch]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-launch");
+          const demo = DEMOS.find((d) => d.id === id) || DEMOS[0];
+          if (!demo) return;
+
+          loadWidgetForDemo(demo);
+
+          // Small scroll so user notices the demo section exists, but don't yank them hard
+          const demoSection = document.getElementById("demoSection");
+          if (demoSection) demoSection.scrollIntoView({ behavior:"smooth" });
+        });
+      });
+
+      // Contact form: submit JSON to new-lead
+      async function handleContactSubmit(e) {
         e.preventDefault();
 
         const form = e.currentTarget;
@@ -888,15 +715,25 @@
         btn.style.opacity = ".75";
         btn.textContent = "Sending...";
 
-        try{
-          const fd = new FormData(form);
+        try {
+          const data = Object.fromEntries(new FormData(form).entries());
 
           const cfg = window.CRASH_CONCIERGE_CONFIG || null;
-          if(cfg?.demoId) fd.set("activeDemoId", cfg.demoId);
-          if(cfg?.demoKind) fd.set("activeDemoKind", cfg.demoKind);
+          if (cfg?.demoId) data.activeDemoId = cfg.demoId;
+          if (cfg?.demoKind) data.activeDemoKind = cfg.demoKind;
 
-          const res = await fetch(form.action, { method:"POST", body: fd });
-          if(!res.ok) throw new Error("Request failed");
+          data.leadType = "contact";
+          data.intent = "contact";
+          data.source = "demo-hub";
+          data.page = "/index.html";
+
+          const res = await fetch("/.netlify/functions/new-lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          if (!res.ok) throw new Error("Request failed");
 
           document.getElementById("contactWrapper").innerHTML = `
             <div class="card success">
@@ -908,7 +745,7 @@
               </p>
             </div>
           `;
-        }catch(err){
+        } catch (err) {
           notice.className = "notice error";
           notice.textContent = "Something went sideways. Please try again, or email Ryan@metalmasterapp.com.";
           btn.disabled = false;
@@ -916,10 +753,6 @@
           btn.textContent = "Send message";
         }
       }
-
-      document.getElementById("btnTryDemo").addEventListener("click", () => {
-        document.getElementById("demoSection").scrollIntoView({ behavior:"smooth" });
-      });
 
       renderDemos();
       document.getElementById("contactForm").addEventListener("submit", handleContactSubmit);
