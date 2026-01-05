@@ -1,0 +1,155 @@
+/* widget/widget.css */
+#cc-launcher {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 22px;
+}
+
+#cc-panel {
+  position: fixed;
+  right: 18px;
+  bottom: 84px;
+  width: min(380px, calc(100vw - 36px));
+  height: min(560px, calc(100vh - 140px));
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  background: #0f0f12;
+  color: #eaeaf0;
+  overflow: hidden;
+  display: none;
+}
+
+#cc-header {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+#cc-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+#cc-subtitle {
+  font-size: 12px;
+  opacity: .8;
+}
+
+#cc-close {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.2);
+  color: #eaeaf0;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#cc-messages {
+  padding: 12px;
+  height: calc(100% - 54px - 92px);
+  overflow: auto;
+}
+
+.cc-bubble {
+  max-width: 84%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  margin: 8px 0;
+  line-height: 1.25;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+.cc-bot {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.08);
+  border-top-left-radius: 6px;
+}
+.cc-user {
+  margin-left: auto;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.10);
+  border-top-right-radius: 6px;
+}
+
+#cc-controls {
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+}
+
+/* ✅ Critical fix: ensure “Done” can’t disappear below the fold */
+#cc-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  max-height: 120px;
+  overflow-y: auto;
+  padding-bottom: 4px;
+}
+
+/* Slightly nicer scrollbar (optional) */
+#cc-quick::-webkit-scrollbar { width: 8px; }
+#cc-quick::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.18);
+  border-radius: 999px;
+}
+
+.cc-btn {
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+  color: #eaeaf0;
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.cc-btn:hover {
+  background: rgba(255,255,255,.10);
+}
+
+#cc-inputrow {
+  display: flex;
+  gap: 8px;
+}
+
+#cc-input {
+  flex: 1;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.25);
+  color: #eaeaf0;
+  padding: 10px 12px;
+  outline: none;
+  font-size: 14px;
+}
+
+#cc-send {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: white;
+  font-weight: 700;
+}
+
+#cc-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: .75;
+}
