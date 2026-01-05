@@ -1,16 +1,15 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Crash Concierge Demo</title>
 
-    <!-- Your existing widget styles -->
+    <!-- Widget styles -->
     <link rel="stylesheet" href="./widget.css" />
 
-    <!-- Mobile fixes (kept here so you can ship fast without hunting CSS files) -->
+    <!-- Mobile fixes -->
     <style>
-      /* Give the panel more usable height on phones */
       @media (max-width: 480px), (max-height: 700px) {
         #cc-panel {
           right: 10px;
@@ -20,30 +19,15 @@
           height: calc(100vh - 110px);
           border-radius: 14px;
         }
-
-        /* Make quick buttons behave like a horizontal chip row */
         #cc-quick {
           flex-wrap: nowrap !important;
           overflow-x: auto !important;
           overflow-y: hidden !important;
-          max-height: none !important;
           -webkit-overflow-scrolling: touch;
           padding-bottom: 6px;
           gap: 8px;
         }
-
-        /* Keep buttons from shrinking into tiny pills */
-        .cc-btn {
-          flex: 0 0 auto;
-          white-space: nowrap;
-        }
-
-        /* Sticky "Done/Clear" behavior:
-           We can't target specific buttons from CSS easily,
-           but we *can* create a sticky rail in the quick area by styling
-           the last two buttons when we add a class in JS.
-           If you haven't added classes in JS, this still improves layout.
-        */
+        .cc-btn { flex: 0 0 auto; white-space: nowrap; }
         .cc-btn.cc-sticky {
           position: sticky;
           right: 0;
@@ -53,6 +37,21 @@
         }
         .cc-btn.cc-sticky-clear {
           position: sticky;
-          right: 86px; /* sits just left of Done */
+          right: 86px;
           z-index: 2;
-          border-color: rgba(255,2
+          border-color: rgba(255,255,255,.28);
+          background: rgba(255,255,255,.10);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1 style="font-family: system-ui; margin: 24px;">
+      Crash Concierge Demo
+    </h1>
+
+    <!-- IMPORTANT: load your widget JS -->
+    <script defer src="./widget.js"></script>
+  </body>
+</html>
