@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FAQ Support Chatbot Demo</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0; background: #0b0c10; color: #e8e8ea;
+      display: grid; place-items: center; min-height: 100vh;
+    }
+    .wrap { width: min(860px, 100vw); padding: 14px; }
+    .card {
+      background: #12131a; border: 1px solid #23243a;
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .topbar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border-bottom: 1px solid #23243a;
+      background: linear-gradient(180deg, #151626, #12131a);
+    }
+    .dot {
+      width: 10px; height: 10px; border-radius: 999px;
+      background: #46d369; box-shadow: 0 0 0 3px rgba(70,211,105,.15);
+    }
+    .title { font-weight: 700; letter-spacing: .2px; }
+    .subtitle { font-size: 12px; opacity: .78; margin-top: 2px; }
+    .spacer { flex: 1; }
+    .tinybtn {
+      border: 1px solid #2a2c4a; background: #17192a; color: #e8e8ea;
+      padding: 7px 10px; border-radius: 10px; cursor: pointer;
+      font-size: 12px;
+    }
+    .tinybtn:hover { background: #1b1d33; }
+
+    .chat {
+      height: min(64vh, 560px);
+      overflow: auto; padding: 14px;
+      scroll-behavior: smooth;
+    }
+    .row { display: flex; margin: 10px 0; }
+    .row.user { justify-content: flex-end; }
+    .bubble {
+      max-width: min(72ch, 84%);
+      padding: 10px 12px; border-radius: 14px;
+      line-height: 1.35; font-size: 14px;
+      border: 1px solid #24264a;
+      white-space: pre-wrap;
+    }
+    .bot .bubble { background: #14162a; }
+    .user .bubble { background: #1f2a4a; border-color: #2c3e7a; }
+    .meta { font-size: 11px; opacity: .7; margin-top: 5px; }
+
+    .typing {
+      display: inline-flex; gap: 6px; align-items: center;
+      padding: 10px 12px; border-radius: 14px;
+      background: #14162a; border: 1px solid #24264a;
+      font-size: 13px; opacity: .9;
+    }
+    .typing i {
+      width: 6px; height: 6px; border-radius: 999px;
+      background: #cfd2ff; opacity: .6; display: inline-block;
+      animation: b 1.1s infinite;
+    }
+    .typing i:nth-child(2){ animation-delay: .15s; }
+    .typing i:nth-child(3){ animation-delay: .3s; }
+    @keyframes b { 0%, 100% { transform: translateY(0); opacity: .45; } 50% { transform: translateY(-3px); opacity: .95; } }
+
+    .quick {
+      display: flex; gap: 8px; padding: 10px 12px;
+      border-top: 1px solid #23243a;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      background: #10111a;
+    }
+    .chip {
+      flex: 0 0 auto;
+      border: 1px solid #2a2c4a;
+      background: #17192a; color: #e8e8ea;
+      padding: 8px 10px; border-radius: 999px;
+      cursor: pointer; font-size: 13px;
+      white-space: nowrap;
+    }
+    .chip:hover { background: #1b1d33; }
+
+    .composer {
+      display: flex; gap: 10px; padding: 12px;
+      border-top: 1px solid #23243a; background: #12131a;
+    }
+    textarea {
+      resize: none; border: 1px solid #2a2c4a; background: #0f1020;
+      color: #e8e8ea; border-radius: 12px;
+      padding: 10px 10px; font-size: 14px;
+      flex: 1; min-height: 42px; max-height: 120px;
+      outline: none;
+    }
+    textarea:focus { border-color: #3a4ba0; }
+    .send {
+      border: 1px solid #3a4ba0; background: #24306a;
+      color: #fff; border-radius: 12px;
+      padding: 0 14px; cursor: pointer; font-weight: 700;
+      min-width: 82px;
+    }
+    .send:hover { background: #2a3880; }
+
+    .footer {
+      font-size: 12px; opacity: .7; margin-top: 10px;
+      text-align: center;
+    }
+    a { color: #b9c2ff; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="application" aria-label="Support Chatbot Demo">
+      <div class="topbar">
+        <span class="dot" aria-hidden="true"></span>
+        <div>
+          <div class="title">Avery, Support</div>
+          <div class="subtitle">Demo FAQ assistant (human-ish tone)</div>
+        </div>
+        <div class="spacer"></div>
+        <button class="tinybtn" id="doneBtn" title="End this conversation">Done</button>
+        <button class="tinybtn" id="resetBtn" title="Reset chat">Reset</button>
+      </div>
+
+      <div class="chat" id="chat" aria-live="polite"></div>
+
+      <div class="quick" id="quick" aria-label="Quick replies"></div>
+
+      <div class="composer">
+        <textarea id="input" placeholder="Type your message… (Shift+Enter for newline)"></textarea>
+        <button class="send" id="send">Send</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      Tip: This is a static demo. For production, you’d connect it to a real help center / ticket system.
+    </div>
+  </div>
+
+  <script>
+    // -----------------------------
+    // FAQ "knowledge base" (edit these)
+    // -----------------------------
+    const FAQS = [
+      {
+        id: "hours",
+        q: "What are your support hours?",
+        a: "We’re available Monday to Friday, 9am to 6pm (local time). If you message after hours, I’ll still take details and we’ll pick it up next business day.",
+        keywords: ["hours", "open", "available", "time", "when", "support hours", "business hours"]
+      },
+      {
+        id: "refunds",
+        q: "What’s your refund policy?",
+        a: "Totally fair question. We offer refunds within 30 days of purchase as long as it’s within the policy conditions. Tell me what you bought and when, and I’ll point you to the quickest path.",
+        keywords: ["refund", "refunds", "money back", "return", "returns", "cancel", "chargeback"]
+      },
+      {
+        id: "shipping",
+        q: "How long does shipping take?",
+        a: "Most orders arrive in 3–7 business days. If you share your order number (or email), I can help you track it.",
+        keywords: ["shipping", "ship", "delivery", "arrive", "tracking", "track", "where is my order"]
+      },
+      {
+        id: "password",
+        q: "I forgot my password / can’t log in",
+        a: "No worries, happens to everyone. Try the “Forgot password” link on the sign-in page. If you’re not getting the email, check spam or tell me your email domain (like Gmail, Outlook) and I’ll help troubleshoot.",
+        keywords: ["password", "login", "log in", "sign in", "can't log in", "cannot login", "reset", "forgot"]
+      },
+      {
+        id: "billing",
+        q: "Billing and invoices",
+        a: "For billing: if you tell me whether this is a subscription or one-time purchase, I can help with invoices, receipts, and updating payment methods.",
+        keywords: ["billing", "invoice", "receipt", "payment", "charged", "charge", "card", "subscription", "renewal"]
+      },
+      {
+        id: "human",
+        q: "Talk to a human",
+        a: "Absolutely. I can hand this to a person. First, I’ll grab a few details so they don’t start from zero.",
+        keywords: ["human", "person", "agent", "representative", "call me", "real person", "someone"]
+      }
+    ];
+
+    // -----------------------------
+    // Demo bot personality + logic
+    // -----------------------------
+    const BOT = {
+      name: "Avery",
+      signoff: "Avery",
+      openers: [
+        "Hey! I’m Avery. What can I help with today?",
+        "Hi there, I’m Avery. What’s going on?",
+        "Hello! Avery here. What do you need a hand with?"
+      ],
+      empathy: [
+        "Got it.",
+        "Makes sense.",
+        "Okay, I’m with you.",
+        "Thanks, that helps."
+      ],
+      clarifiers: [
+        "Quick detail so I don’t guess: ",
+        "One tiny question: ",
+        "Just to make sure I’m aiming right: "
+      ]
+    };
+
+    // Escalation flow state
+    const state = {
+      mode: "faq", // faq | escalate_collect | ended
+      ticket: { name: "", email: "", summary: "" }
+    };
+
+    // Quick replies (you can change these)
+    const QUICK_REPLIES = [
+      "Refund policy",
+      "Track my order",
+      "Reset password",
+      "Billing question",
+      "Talk to a human",
+      "Support hours"
+    ];
+
+    // -----------------------------
+    // UI helpers
+    // -----------------------------
+    const chatEl = document.getElementById("chat");
+    const quickEl = document.getElementById("quick");
+    const inputEl = document.getElementById("input");
+    const sendBtn = document.getElementById("send");
+    const resetBtn = document.getElementById("resetBtn");
+    const doneBtn = document.getElementById("doneBtn");
+
+    function nowTime() {
+      const d = new Date();
+      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function addMessage(who, text) {
+      const row = document.createElement("div");
+      row.className = `row ${who}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = who === "bot" ? `${BOT.signoff} • ${nowTime()}` : `You • ${nowTime()}`;
+
+      const wrap = document.createElement("div");
+      wrap.appendChild(bubble);
+      wrap.appendChild(meta);
+
+      row.appendChild(wrap);
+      chatEl.appendChild(row);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function addTyping() {
+      const row = document.createElement("div");
+      row.className = "row bot";
+      row.id = "typingRow";
+
+      const t = document.createElement("div");
+      t.className = "typing";
+      t.innerHTML = `<i></i><i></i><i></i>`;
+
+      row.appendChild(t);
+      chatEl.appendChild(row);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function removeTyping() {
+      const row = document.getElementById("typingRow");
+      if (row) row.remove();
+    }
+
+    function setQuickReplies(items) {
+      quickEl.innerHTML = "";
+      items.forEach(label => {
+        const b = document.createElement("button");
+        b.className = "chip";
+        b.type = "button";
+        b.textContent = label;
+        b.addEventListener("click", () => {
+          if (state.mode === "ended") return;
+          sendUser(label);
+        });
+        quickEl.appendChild(b);
+      });
+    }
+
+    function normalize(s) {
+      return (s || "")
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s]/gu, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function scoreFaq(userText, faq) {
+      const t = normalize(userText);
+      if (!t) return 0;
+
+      // Basic scoring: keyword hits + phrase hits
+      let score = 0;
+      for (const kw of faq.keywords) {
+        const k = normalize(kw);
+        if (!k) continue;
+        if (t.includes(k)) score += (k.split(" ").length > 1 ? 3 : 1);
+      }
+
+      // Small bonus if question words appear
+      const qBonus = ["how", "what", "when", "where", "why", "can", "do"].some(w => t.includes(w)) ? 0.5 : 0;
+      return score + qBonus;
+    }
+
+    function bestFaqMatch(userText) {
+      const scored = FAQS.map(f => ({ f, s: scoreFaq(userText, f) }))
+        .sort((a,b) => b.s - a.s);
+
+      const best = scored[0];
+      if (!best || best.s < 1.5) return null; // threshold
+      return best.f;
+    }
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    async function botSay(text, { delayMin=450, delayMax=900 } = {}) {
+      addTyping();
+      const delay = Math.floor(delayMin + Math.random() * (delayMax - delayMin));
+      await new Promise(r => setTimeout(r, delay));
+      removeTyping();
+      addMessage("bot", text);
+    }
+
+    // -----------------------------
+    // Conversation logic
+    // -----------------------------
+    async function handleFaq(userText) {
+      const match = bestFaqMatch(userText);
+
+      // Escalate keywords
+      if (match && match.id === "human") {
+        state.mode = "escalate_collect";
+        await botSay(match.a);
+        await botSay("What’s a good name to put on the request?");
+        return;
+      }
+
+      if (match) {
+        await botSay(pick(BOT.empathy) + " " + match.a);
+
+        // Light follow-up question to feel human
+        if (match.id === "shipping") {
+          await botSay("If you have it handy, drop your order number and I’ll tell you what I can from the demo side.");
+        } else if (match.id === "refunds") {
+          await botSay("Was it a subscription or a one-time purchase?");
+        } else if (match.id === "password") {
+          await botSay("Are you seeing an error message, or is it just not sending the reset email?");
+        }
+
+        return;
+      }
+
+      // No match: respond human-ish and ask clarifying question
+      const t = normalize(userText);
+      const nudge =
+        "I want to make sure I don’t send you on a wild goose chase. " +
+        pick(BOT.clarifiers) +
+        "is this about billing, an order, logging in, or something else?";
+
+      // If user looks upset, show empathy
+      const seemsUpset = ["angry", "mad", "furious", "terrible", "worst", "sucks", "hate", "frustrated", "wtf"].some(w => t.includes(w));
+      if (seemsUpset) {
+        await botSay("Yeah, that’s frustrating. Let’s fix it.");
+      }
+
+      await botSay(nudge);
+      await botSay("If you want, you can also tap “Talk to a human” and I’ll package this up as a support request.");
+    }
+
+    async function handleEscalation(userText) {
+      // Collect name -> email -> summary
+      if (!state.ticket.name) {
+        state.ticket.name = userText.trim().slice(0, 80);
+        await botSay(`Thanks, ${state.ticket.name}. What email should we reply to?`);
+        return;
+      }
+
+      if (!state.ticket.email) {
+        const email = userText.trim();
+        const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if (!looksLikeEmail) {
+          await botSay("That doesn’t look like a valid email (totally possible it’s just a typo). Can you re-enter it?");
+          return;
+        }
+        state.ticket.email = email;
+        await botSay("Perfect. Last thing: in one sentence, what happened (and what would a good outcome look like)?");
+        return;
+      }
+
+      if (!state.ticket.summary) {
+        state.ticket.summary = userText.trim().slice(0, 400);
+
+        // “Ticket created” (demo)
+        await botSay("Got it. I’m creating a support request now.");
+        await botSay(
+          "✅ Support request created (demo)\n\n" +
+          `Name: ${state.ticket.name}\n` +
+          `Email: ${state.ticket.email}\n` +
+          `Summary: ${state.ticket.summary}\n\n` +
+          "A human agent would take it from here. Want to keep chatting, or are we good?"
+        );
+
+        // Return to FAQ mode (but keep ticket info)
+        state.mode = "faq";
+        return;
+      }
+    }
+
+    async function handleUser(userText) {
+      if (state.mode === "ended") {
+        await botSay("This chat is marked done. Hit Reset if you want to start a new one.");
+        return;
+      }
+
+      // Global commands
+      const t = normalize(userText);
+      if (t === "done" || t === "end" || t === "close") {
+        endConversation();
+        return;
+      }
+      if (t === "reset" || t === "start over") {
+        resetConversation();
+        return;
+      }
+
+      if (state.mode === "escalate_collect") {
+        await handleEscalation(userText);
+        return;
+      }
+
+      await handleFaq(userText);
+    }
+
+    function sendUser(text) {
+      const msg = (text ?? inputEl.value).trim();
+      if (!msg) return;
+      inputEl.value = "";
+      addMessage("user", msg);
+      handleUser(msg);
+    }
+
+    function resetConversation() {
+      state.mode = "faq";
+      state.ticket = { name: "", email: "", summary: "" };
+      chatEl.innerHTML = "";
+      boot();
+    }
+
+    async function endConversation() {
+      state.mode = "ended";
+      await botSay("All set. I’ll mark this as done. If you need anything else, hit Reset and we’ll spin up a fresh chat.");
+    }
+
+    function boot() {
+      setQuickReplies(QUICK_REPLIES);
+      botSay(pick(BOT.openers));
+      botSay("Quick shortcuts: refund policy, tracking, password help, billing, or talking to a human.");
+    }
+
+    // Events
+    sendBtn.addEventListener("click", () => sendUser());
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendUser();
+      }
+    });
+
+    resetBtn.addEventListener("click", resetConversation);
+    doneBtn.addEventListener("click", endConversation);
+
+    // Start
+    boot();
+  </script>
+</body>
+</html>

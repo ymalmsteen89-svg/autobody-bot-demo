@@ -419,6 +419,8 @@
               <button class="btn btn-primary" data-launch="wesbecker-automotive">Launch Wesbecker</button>
               <button class="btn btn-primary" data-launch="demo-plumbing-hvac">Launch Plumbing/HVAC</button>
               <a class="btn btn-ghost" href="mailto:Ryan@metalmasterapp.com?subject=Custom%20Chatbot%20Demo">Email Ryan</a>
+            
+              <a class="btn btn-ghost" href="index2.html">Customer Support Demo</a>
             </div>
           </div>
 
@@ -755,7 +757,15 @@
       }
 
       renderDemos();
-      document.getElementById("contactForm").addEventListener("submit", handleContactSubmit);
-    </script>
+
+      // Ensure submit handler attaches even if script loads early
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("contactForm");
+        if (form) {
+          form.addEventListener("submit", handleContactSubmit);
+        }
+      });
+
+      </script>
   </body>
 </html>
