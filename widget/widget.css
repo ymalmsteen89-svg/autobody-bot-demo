@@ -18,14 +18,15 @@
 #cc-panel {
   position: fixed;
   right: 18px;
-  bottom: 84px;
+  bottom: calc(84px + env(safe-area-inset-bottom));
   width: min(380px, calc(100vw - 36px));
-  height: min(560px, calc(100vh - 140px));
+  height: min(560px, calc(100dvh - 140px - env(safe-area-inset-bottom)));
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   background: #0f0f12;
   color: #eaeaf0;
   overflow: hidden;
+  flex-direction: column;
   display: none;
 }
 
@@ -60,7 +61,8 @@
 
 #cc-messages {
   padding: 12px;
-  height: calc(100% - 54px - 92px);
+  flex: 1;
+  min-height: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -89,7 +91,7 @@
 }
 
 #cc-controls {
-  padding: 10px 12px 12px;
+  padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
 }
@@ -204,16 +206,12 @@
     right: 10px;
     left: 10px;
     width: auto;
-    bottom: 76px;
-    height: calc(100dvh - 110px);
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    height: calc(100dvh - 110px - env(safe-area-inset-bottom));
     border-radius: 14px;
   }
 
-  #cc-messages {
-    height: calc(100% - 54px - 96px);
-  }
-
   #cc-controls {
-    padding-bottom: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
   }
 }

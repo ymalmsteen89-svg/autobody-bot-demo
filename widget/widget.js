@@ -146,7 +146,7 @@
   }
 
   function openPanel() {
-    panel.style.display = "block";
+    panel.style.display = "flex";
     launcher.style.display = "none";
     if ($messages.childElementCount === 0) start();
   }
