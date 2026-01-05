@@ -8,8 +8,9 @@
 
   // Identify which demo flow to run
   const demoId = cfg.demoId || "";
-  const demoKind = cfg.demoKind || "autobody"; // "autobody" | "automotive"
+  const demoKind = cfg.demoKind || "autobody"; // "autobody" | "automotive" | "home_service"
   const isWesbecker = demoId === "wesbecker-automotive" || demoKind === "automotive";
+  const isHomeService = demoId === "demo-plumbing-hvac" || demoKind === "home_service";
 
   const state = {
     step: "WELCOME",
@@ -37,6 +38,10 @@
       service_type: "",       // e.g., oil_change, brakes, diag, etc.
       quote_estimate: "",     // e.g., "$120–$180"
       symptoms: "",           // short description
+
+      // home service demo fields
+      home_service_category: "",
+      home_service_issue: "",
 
       // contact
       contact_preference: "text",
@@ -74,7 +79,13 @@
     <div id="cc-header">
       <div>
         <div id="cc-title">${shopName} · Chat</div>
-        <div id="cc-subtitle">${isWesbecker ? "Subaru service & rough quotes" : "Estimates + inspections in minutes"}</div>
+        <div id="cc-subtitle">${
+          isHomeService
+            ? "Plumbing + HVAC scheduling demo"
+            : isWesbecker
+              ? "Subaru service & rough quotes"
+              : "Estimates + inspections in minutes"
+        }</div>
       </div>
       <button id="cc-close" aria-label="Close">✕</button>
     </div>
@@ -197,6 +208,9 @@
       quote_estimate: "",
       symptoms: "",
 
+      home_service_category: "",
+      home_service_issue: "",
+
       contact_preference: "text",
       name: "",
       phone: "",
@@ -245,6 +259,13 @@
       lines.push(`ZIP: ${L.zip || "-"}`);
     }
 
+    if (L.intent === "home_service") {
+      lines.push(`Service type: ${L.home_service_category || "-"}`);
+      lines.push(`Issue: ${L.home_service_issue || "-"}`);
+      lines.push(`ZIP: ${L.zip || "-"}`);
+      if (L.preferred_time_window) lines.push(`Time window: ${L.preferred_time_window}`);
+    }
+
     lines.push(`Contact: ${L.contact_preference || "-"}`);
     lines.push(`Name: ${L.name || "-"}`);
     lines.push(`Phone: ${L.phone || "-"}`);
@@ -289,6 +310,14 @@
   }
 
   async function submitLead() {
+    const meta = { ...(state.lead.meta || {}) };
+    if (state.lead.intent === "home_service") {
+      meta.home_service = {
+        category: state.lead.home_service_category || null,
+        issue: state.lead.home_service_issue || null,
+      };
+    }
+
     const payload = {
       source: state.lead.source,
       intent: state.lead.intent,
@@ -323,7 +352,7 @@
       preferred_time_window: state.lead.preferred_time_window,
       notes: state.lead.notes,
 
-      meta: state.lead.meta,
+      meta,
     };
 
     setQuickButtons([]);
@@ -358,6 +387,19 @@
 
   // ---------- Start ----------
   function start() {
+    if (isHomeService) {
+      state.lead.intent = "home_service";
+      addBubble("Hi! I can help schedule plumbing or HVAC service.\n\nWhat do you need help with?", "bot");
+      setQuickButtons([
+        { label: "Plumbing", value: "HS_PLUMBING" },
+        { label: "HVAC", value: "HS_HVAC" },
+        { label: "Not sure", value: "HS_OTHER" },
+      ]);
+      setHint("");
+      state.step = "HS_SERVICE";
+      return;
+    }
+
     if (isWesbecker) {
       // Wesbecker demo: Subaru first
       state.lead.intent = "automotive_quote";
@@ -408,6 +450,97 @@
       addBubble("Okay, trying again…", "bot");
       submitLead();
       return;
+    }
+
+    // -------------------------
+    // Home Service Flow
+    // -------------------------
+    if (isHomeService) {
+      switch (state.step) {
+        case "HS_SERVICE": {
+          if (raw === "HS_PLUMBING") {
+            state.lead.home_service_category = "plumbing";
+          } else if (raw === "HS_HVAC") {
+            state.lead.home_service_category = "hvac";
+          } else if (raw === "HS_OTHER") {
+            addBubble("No problem. What type of service do you need?", "bot");
+            setQuickButtons([]);
+            setHint("Example: plumbing, HVAC, water heater.");
+            state.step = "HS_SERVICE_OTHER";
+            return;
+          } else {
+            addBubble("Tap a button to choose plumbing or HVAC.", "bot");
+            setQuickButtons([
+              { label: "Plumbing", value: "HS_PLUMBING" },
+              { label: "HVAC", value: "HS_HVAC" },
+              { label: "Not sure", value: "HS_OTHER" },
+            ]);
+            return;
+          }
+
+          addBubble("What seems to be the issue? (one sentence)", "bot");
+          setQuickButtons([]);
+          setHint("Example: leak under kitchen sink, no heat upstairs.");
+          state.step = "HS_ISSUE";
+          return;
+        }
+
+        case "HS_SERVICE_OTHER": {
+          state.lead.home_service_category = raw;
+          addBubble("What seems to be the issue? (one sentence)", "bot");
+          setQuickButtons([]);
+          setHint("Example: leak under kitchen sink, no heat upstairs.");
+          state.step = "HS_ISSUE";
+          return;
+        }
+
+        case "HS_ISSUE": {
+          state.lead.home_service_issue = raw;
+          addBubble("What's your ZIP code?", "bot");
+          setQuickButtons([]);
+          setHint("5 digits.");
+          state.step = "HS_ZIP";
+          return;
+        }
+
+        case "HS_ZIP": {
+          if (!isZip(raw)) {
+            addBubble("That ZIP doesn't look right. Please enter 5 digits.", "bot");
+            return;
+          }
+          state.lead.zip = raw;
+
+          addBubble("Pick a preferred time window:", "bot");
+          setQuickButtons([
+            { label: "Today (9-12)", value: "HS_TIME_today_morning" },
+            { label: "Today (12-3)", value: "HS_TIME_today_afternoon" },
+            { label: "Tomorrow (9-12)", value: "HS_TIME_tomorrow_morning" },
+            { label: "Tomorrow (12-3)", value: "HS_TIME_tomorrow_afternoon" },
+            { label: "This week (3-6)", value: "HS_TIME_week_evening" },
+          ]);
+          setHint("");
+          state.step = "HS_TIME";
+          return;
+        }
+
+        case "HS_TIME": {
+          if (!raw.startsWith("HS_TIME_")) {
+            addBubble("Tap a time window button.", "bot");
+            return;
+          }
+          state.lead.preferred_time_window = raw.replace("HS_TIME_", "");
+
+          addBubble("Best way to reach you?", "bot");
+          setQuickButtons([
+            { label: "Text", value: "CP_text" },
+            { label: "Call", value: "CP_call" },
+            { label: "Email", value: "CP_email" },
+          ]);
+          setHint("");
+          state.step = "CONTACT_PREF";
+          return;
+        }
+      }
     }
 
     // -------------------------
